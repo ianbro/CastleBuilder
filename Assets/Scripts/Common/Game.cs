@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using AssemblyCSharp.Backend;
 
 namespace AssemblyCSharp.Common
 {
@@ -38,11 +39,29 @@ namespace AssemblyCSharp.Common
 			this.Settings = new GameSettings (10);
 			this.Logic = new GameLogic ();
 		}
-		
+
+		#region Temp
+		bool isCreatingTile = false;
+		#endregion
+
 		// Update is called once per frame
 		void Update ()
 		{
-		
+			Tile t;
+			if (Input.GetKeyDown (KeyCode.A)) {
+				isCreatingTile = !isCreatingTile;
+			}
+
+			if (isCreatingTile && Input.GetKeyDown(KeyCode.Mouse0)) {
+				Ray ray = GameObject.Find("Main Camera").GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+				RaycastHit hit;
+				if (Physics.Raycast(ray, out hit)) {
+					Vector3 point = hit.point;
+					t = new Tile(point.x, point.z, 63f);
+					Debug.Log (t);
+					t.Render ();
+				}
+			}
 		}
 	}
 }

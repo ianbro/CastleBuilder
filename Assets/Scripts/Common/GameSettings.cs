@@ -20,7 +20,7 @@ namespace AssemblyCSharp.Common
 		/// </summary>
 		public GameObject TilePrefab {
 			get {
-				GameObject tilePrefab = Resources.Load ("Prefab/Placement/TileObject");
+				GameObject tilePrefab = (GameObject) Resources.Load ("Prefabs/Placement/TileSquare");
 				return tilePrefab;
 			}
 		}
