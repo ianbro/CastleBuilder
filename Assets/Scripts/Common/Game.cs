@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using AssemblyCSharp.Backend;
+using AssemblyCSharp.Frontend;
 
 namespace AssemblyCSharp.Common
 {
@@ -33,11 +34,17 @@ namespace AssemblyCSharp.Common
 		/// </summary>
 		public GameLogic Logic;
 
+		/// <summary>
+		/// The remote for the main camera in the game.
+		/// </summary>
+		public CameraRemote MainCamera;
+
 		// Use this for initialization
 		void Start ()
 		{
 			this.Settings = new GameSettings (10);
 			this.Logic = new GameLogic ();
+			this.MainCamera = GameObject.Find ("Main Camera").GetComponent<CameraRemote> ();
 		}
 
 		#region Temp
@@ -53,12 +60,11 @@ namespace AssemblyCSharp.Common
 			}
 
 			if (isCreatingTile && Input.GetKeyDown(KeyCode.Mouse0)) {
-				Ray ray = GameObject.Find("Main Camera").GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+				Ray ray = this.MainCamera.CameraScript.ScreenPointToRay(Input.mousePosition);
 				RaycastHit hit;
 				if (Physics.Raycast(ray, out hit)) {
 					Vector3 point = hit.point;
 					t = new Tile(point.x, point.z, 63f);
-					Debug.Log (t);
 					t.Render ();
 				}
 			}
