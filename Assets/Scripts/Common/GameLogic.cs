@@ -21,8 +21,17 @@ namespace AssemblyCSharp.Common
 			
 		}
 
-		public void PlaceTile(int x, int y, Quaternion rotation) {
-
+		/// <summary>
+		/// Places the tile on the map and returns the Tile object created.
+		/// </summary>
+		/// <returns>The tile.</returns>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="z">The z coordinate.</param>
+		/// <param name="rotationY">Rotation y.</param>
+		public Tile PlaceTile(int x, int z, float rotationY) {
+			Tile t = new Tile(x, z, rotationY);
+			t.Render ();
+			return t;
 		}
 
 	}
