@@ -82,6 +82,8 @@ namespace AssemblyCSharp.Frontend
 
 		#endregion
 
+
+
 		#region Panning
 
 		#region Properties
@@ -98,12 +100,21 @@ namespace AssemblyCSharp.Frontend
 		#endregion
 
 		#region Private Methods
+		/// <summary>
+		/// Determines whether or not the mouse is at the edge of the screen within a certain amount of pixels.
+		/// </summary>
+		/// <returns><c>true</c>, if mouse at edge of screen was ised, <c>false</c> otherwise.</returns>
 		private bool isMouseAtEdgeOfScreen() {
-			float edgeDist = 10;
-			if (Input.mousePosition.x < edgeDist ||
-			    Input.mousePosition.x > Screen.width - edgeDist ||
-			    Input.mousePosition.y < edgeDist ||
-			    Input.mousePosition.y > Screen.height - edgeDist) {
+			float topBottomDist = 30;
+			float leftRightDist = 70;
+			/*Debug.Log ("================");
+			Debug.Log(Input.mousePosition);
+			Debug.Log (this.CameraScript.pixelWidth - leftRightDist);
+			Debug.Log (this.CameraScript.pixelHeight - topBottomDist);*/
+			if (Input.mousePosition.x < leftRightDist ||
+				Input.mousePosition.x > this.CameraScript.pixelWidth - leftRightDist ||
+				Input.mousePosition.y < topBottomDist ||
+				Input.mousePosition.y > this.CameraScript.pixelHeight - topBottomDist) {
 				return true;
 			} else {
 				return false;
@@ -112,29 +123,26 @@ namespace AssemblyCSharp.Frontend
 		#endregion
 
 		#region Public Methods
+		/// <summary>
+		/// Pans the camera based on the mouse position on the edge of the screen. There is some manipulations
+		/// that need to be done first such as flipping the x and y coordinates of the mouse position and
+		/// keeping the y position of the mouse constant.
+		/// </summary>
 		public void panViaMouse() {
 			if (this.isMouseAtEdgeOfScreen ()) {
-				Debug.Log ("======================");
-				Debug.Log (this.gameObject.transform.position);
-				Debug.Log (Input.mousePosition);
+				Vector3 mousePosition = Input.mousePosition;
 
-				Vector3 mouseCoordinateAltered = new Vector3 (Input.mousePosition.x, Input.mousePosition.z, Input.mousePosition.y);
+				// Make mouse position on screen relative to center of screen instead of bottom left corner.
+				mousePosition.x = mousePosition.x - (Screen.width / 2);
+				mousePosition.y = mousePosition.y - (Screen.height / 2);
 
-				Ray ray = this.CameraScript.ScreenPointToRay (mouseCoordinateAltered);
+				// Because camera is top down, mouse coordinates are read with the x and y switched.
+				// The Y will later be set to a constant position.
+				mousePosition.z = mousePosition.y;
 
-				Debug.Log (mouseCoordinateAltered);
-				Debug.Log (ray);
-
-				Vector3 cameraDestinationDirection = ray.GetPoint (Screen.width/2);
-				cameraDestinationDirection.y = this.gameObject.transform.position.y;
-
-				Debug.Log (cameraDestinationDirection);
-
-				Vector3 newCameraPosition = Vector3.Lerp (this.gameObject.transform.position, cameraDestinationDirection, this.PanSpeed/this.panSpeedDivisor);
-				Debug.Log (newCameraPosition);
-
-				//Debug.Log (cameraDestination);
-				this.gameObject.transform.position = newCameraPosition;
+				Vector3 cameraDestination = this.transform.position + mousePosition;
+				cameraDestination.y = this.transform.position.y;
+				this.transform.position = Vector3.Lerp (this.transform.position, cameraDestination, this.PanSpeed / this.panSpeedDivisor);
 			}
 		}
 		#endregion
